@@ -31,9 +31,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
-      - run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      - name: Set up npm registry and auth token
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
           echo "@BadVoice:registry=https://npm.pkg.github.com" >> ~/.npmrc
-          yarn publish --access public
+      - name: Publish package to npm
+        run: yarn publish --access public --non-interactive
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
