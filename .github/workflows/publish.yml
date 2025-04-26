@@ -36,6 +36,7 @@ jobs:
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
           echo "@BadVoice:registry=https://npm.pkg.github.com" >> ~/.npmrc
       - name: Publish package to npm
-        run: yarn publish --access public --non-interactive
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm config set registry https://npm.pkg.github.com
+          npm config set //npm.pkg.github.com/:_authToken ${{ secrets.NPM_TOKEN }}
+          yarn publish --access public --non-interactive
