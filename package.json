@@ -1,6 +1,6 @@
 {
   "name": "zano-mnemonic",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": "",
   "author": "webHikari <https://t.me/net_hikari> BadVoice <https://t.me/GermanSmurov>",
   "main": "dist/index.js",

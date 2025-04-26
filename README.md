@@ -20,12 +20,12 @@ A lightweight library for working with Zano mnemonic seed phrases. This library 
 Install the library via npm:
 
 ```bash
-npm install @badoice/zano-mnemonic
+npm install zano-mnemonic
 ```
 
 ```typescript 
-import type { MnemonicToSeedResult } from '@badoice/zano-mnemonic';
-import { mnemonicToSeed } from '@badoice/zano-mnemonic';
+import type { MnemonicToSeedResult } from 'zano-mnemonic';
+import { mnemonicToSeed } from 'zano-mnemonic';
 
 (async () => {
   try {
