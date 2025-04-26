@@ -1,6 +1,4 @@
-# Electron-mnemonic
-
-# @badvoice/zano-mnemonic
+# zano-mnemonic
 
 A lightweight library for working with Zano mnemonic seed phrases. This library provides tools to convert mnemonic phrases into binary seeds, which can be used for wallet generation and other cryptographic operations.
 
