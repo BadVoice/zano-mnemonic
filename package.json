@@ -1,0 +1,77 @@
+{
+  "name": "zano-mnemonic",
+  "version": "0.0.1",
+  "repository": "",
+  "author": "webHikari <https://t.me/net_hikari> BadVoice <https://t.me/GermanSmurov>",
+  "main": "dist/index.js",
+  "private": false,
+  "license": "MIT",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r ts-node/register node_modules/.bin/jest --runInBand",
+    "build": "tsc -p ./tsconfig.build.json",
+    "preversion": "yarn test",
+    "version": "yarn build && git add -A dist",
+    "postversion": "git push && git push --tags",
+    "lint": "eslint \"{src,apps,lib,test}/**/*.ts\" --fix"
+  },
+  "dependencies": {
+    "big.js": "^6.1.1",
+    "bn.js": "^5.2.1",
+    "elliptic": "^6.5.4",
+    "js-sha3": "^0.9.3",
+    "keccak": "^3.0.3",
+    "rimraf": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/big.js": "^6",
+    "@types/elliptic": "^6.4.18",
+    "@types/jest": "^29.5.14",
+    "@types/keccak": "^3.0.5",
+    "@types/node": "^18",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "eslint": "^7.32.0",
+    "eslint-import-resolver-node": "^0.3.4",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-import-newlines": "^1.1.7",
+    "eslint-plugin-jest": "^24.3.6",
+    "eslint-plugin-tsdoc": "^0.2.14",
+    "jest": "^26.6.3",
+    "nodemon": "^3.1.10",
+    "ts-jest": "^26.5.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^4.3.5"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": ".",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s",
+      "!dist/**",
+      "!coverage/**"
+    ],
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}
