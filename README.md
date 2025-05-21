@@ -22,16 +22,20 @@ npm install zano-mnemonic
 ```
 
 ```typescript 
-import type { MnemonicToSeedResult } from 'zano-mnemonic';
-import { mnemonicToSeed } from 'zano-mnemonic';
+import type { MnemonicToSeedResult, SeedToMnemonicResult } from 'zano-mnemonic';
+import { mnemonicToSeed, seedToMnemonic } from 'zano-mnemonic';
 
 (async () => {
   try {
     // Convert a mnemonic phrase into a private key in hex format
     const seed: MnemonicToSeedResult = await mnemonicToSeed('seedPhraseWithoutPassword');
+
+    // mnemonic without password
+    const mnemonic: SeedToMnemonicResult = await seedToMnemonic('seedKey');
     
     // Log the result
     console.log(seed);
+    console.log(mnemonic);
   } catch (error) {
     console.error('Error while processing seed:', error.message);
   }

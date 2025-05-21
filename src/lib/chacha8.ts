@@ -1,4 +1,4 @@
-import { createCipher, XorStream } from "./arx";
+import { createCipher, XorStream } from './arx';
 
 
 export function rotl(a: number, b: number): number {

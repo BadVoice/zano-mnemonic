@@ -1,7 +1,7 @@
-
+import { getTimestampFromWord } from './seed-to-mnemonic';
+import { MnemonicToSeedResult } from './types';
 import { phrases } from '../consts/phrases';
 import { keysFromDefault } from '../lib/crypto';
-import { MnemonicToSeedResult } from './types';
 
 export const NUMWORDS = 1626;
 
@@ -22,67 +22,67 @@ const BINARY_SIZE_SEED = 32;
  * @returns The secret spend key as a hex string, or `false` if parsing failed.
  */
 export async function mnemonicToSeed(seedPhraseRaw: string): Promise<MnemonicToSeedResult> {
-    const seedPhrase: string = seedPhraseRaw.trim();
-    const words: string[] = seedPhrase.split(/\s+/);
+  const seedPhrase: string = seedPhraseRaw.trim();
+  const words: string[] = seedPhrase.split(/\s+/);
 
-    let keysSeedText: string;
-    let timestampWord: string;
+  let keysSeedText: string;
+  let timestampWord: string;
 
-    if (words.length === SEED_PHRASE_V1_WORDS_COUNT) {
-        timestampWord = words.pop()!;
-        keysSeedText = words.join(' ');
-    } else if (words.length === SEED_PHRASE_V2_WORDS_COUNT) {
-        words.pop(); // drop audit+checksum
-        timestampWord = words.pop()!;
-        keysSeedText = words.join(' ');
-    } else {
-        console.error('Invalid seed phrase word count:', words.length);
-        return false;
-    }
+  if (words.length === SEED_PHRASE_V1_WORDS_COUNT) {
+    timestampWord = words.pop()!;
+    keysSeedText = words.join(' ');
+  } else if (words.length === SEED_PHRASE_V2_WORDS_COUNT) {
+    words.pop(); // drop audit+checksum
+    timestampWord = words.pop()!;
+    keysSeedText = words.join(' ');
+  } else {
+    console.error('Invalid seed phrase word count:', words.length);
+    return false;
+  }
 
-    let keysSeedBinary: Buffer;
-    try {
-        keysSeedBinary = text2binary(keysSeedText);
-    } catch (error) {
-        console.error('Failed to convert seed text to binary:', error);
-        return false;
-    }
+  let keysSeedBinary: Buffer;
+  try {
+    keysSeedBinary = text2binary(keysSeedText);
+  } catch (error) {
+    console.error('Failed to convert seed text to binary:', error);
+    return false;
+  }
 
-    if (!keysSeedBinary.length) {
-        console.error('Empty binary seed after conversion');
-        return false;
-    }
+  if (!keysSeedBinary.length) {
+    console.error('Empty binary seed after conversion');
+    return false;
+  }
 
-    const { secretSpendKey } = keysFromDefault(keysSeedBinary, BINARY_SIZE_SEED);
-    return secretSpendKey;
+  const { secretSpendKey } = keysFromDefault(keysSeedBinary, BINARY_SIZE_SEED);
+  return secretSpendKey;
 }
 
 function text2binary(text: string): Buffer {
-    const tokens: string[] = text.trim().split(/\s+/);
+  const tokens: string[] = text.trim().split(/\s+/);
 
-    if (tokens.length % 3 !== 0) {
-        throw new Error("Invalid word count in mnemonic text");
+  if (tokens.length % 3 !== 0) {
+    throw new Error('Invalid word count in mnemonic text');
+  }
+
+  const res: Buffer = Buffer.alloc((tokens.length / 3) * 4);
+
+  for (let i = 0; i < tokens.length / 3; i++) {
+    const w1: number = wordsMap.get(tokens[i * 3]);
+    const w2: number = wordsMap.get(tokens[i * 3 + 1]);
+    const w3: number = wordsMap.get(tokens[i * 3 + 2]);
+
+    if (w1 === undefined || w2 === undefined || w3 === undefined) {
+      throw new Error('Invalid word in mnemonic text');
     }
 
-    const res: Buffer = Buffer.alloc((tokens.length / 3) * 4);
+    const val: number = w1 + NUMWORDS * (((NUMWORDS - w1) + w2) % NUMWORDS) + NUMWORDS * NUMWORDS * (((NUMWORDS - w2) + w3) % NUMWORDS);
 
-    for (let i = 0; i < tokens.length / 3; i++) {
-        const w1: number = wordsMap.get(tokens[i * 3]);
-        const w2: number = wordsMap.get(tokens[i * 3 + 1]);
-        const w3: number = wordsMap.get(tokens[i * 3 + 2]);
+    const byteIndex: number = i * 4;
+    res[byteIndex] = val & 0xFF;
+    res[byteIndex + 1] = (val >> 8) & 0xFF;
+    res[byteIndex + 2] = (val >> 16) & 0xFF;
+    res[byteIndex + 3] = (val >> 24) & 0xFF;
+  }
 
-        if (w1 === undefined || w2 === undefined || w3 === undefined) {
-            throw new Error("Invalid word in mnemonic text");
-        }
-
-        const val: number = w1 + NUMWORDS * (((NUMWORDS - w1) + w2) % NUMWORDS) + NUMWORDS * NUMWORDS * (((NUMWORDS - w2) + w3) % NUMWORDS);
-
-        const byteIndex: number = i * 4;
-        res[byteIndex] = val & 0xFF;
-        res[byteIndex + 1] = (val >> 8) & 0xFF;
-        res[byteIndex + 2] = (val >> 16) & 0xFF;
-        res[byteIndex + 3] = (val >> 24) & 0xFF;
-    }
-
-    return res;
+  return res;
 }

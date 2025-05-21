@@ -45,7 +45,7 @@ exports.mnemonicToSeed = mnemonicToSeed;
 function text2binary(text) {
     const tokens = text.trim().split(/\s+/);
     if (tokens.length % 3 !== 0) {
-        throw new Error("Invalid word count in mnemonic text");
+        throw new Error('Invalid word count in mnemonic text');
     }
     const res = Buffer.alloc((tokens.length / 3) * 4);
     for (let i = 0; i < tokens.length / 3; i++) {
@@ -53,7 +53,7 @@ function text2binary(text) {
         const w2 = wordsMap.get(tokens[i * 3 + 1]);
         const w3 = wordsMap.get(tokens[i * 3 + 2]);
         if (w1 === undefined || w2 === undefined || w3 === undefined) {
-            throw new Error("Invalid word in mnemonic text");
+            throw new Error('Invalid word in mnemonic text');
         }
         const val = w1 + exports.NUMWORDS * (((exports.NUMWORDS - w1) + w2) % exports.NUMWORDS) + exports.NUMWORDS * exports.NUMWORDS * (((exports.NUMWORDS - w2) + w3) % exports.NUMWORDS);
         const byteIndex = i * 4;
