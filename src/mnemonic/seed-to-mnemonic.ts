@@ -18,12 +18,13 @@ export function seedToMnemonic(keysSeedHex: string): SeedToMnemonicResult {
   const keysSeedBinary: Buffer = Buffer.from(keysSeedHex, 'hex');
   const mnemonic: string = binaryToText(keysSeedBinary);
 
-  // idk why zano wallet doesn't accept date now
-  const timestamp: number = WALLET_BRAIN_DATE_OFFSET;
+  const timestamp: number = Math.floor(Date.now() / 1000);
   const creationTimestampWord: string = getWordFromTimestamp(timestamp, false);
 
+  const timestampFromWord: number = getTimestampFromWord(creationTimestampWord, false);
+
   const hashWithTimestamp: Buffer = Buffer.from(fastHash(keysSeedBinary));
-  hashWithTimestamp.writeBigUInt64LE(BigInt(timestamp), 0);
+  hashWithTimestamp.writeBigUInt64LE(BigInt(timestampFromWord), 0);
 
   const checksumHash: Buffer = fastHash(hashWithTimestamp);
   const checksumValue: number = Number(checksumHash.readBigUInt64LE(0) % BigInt(CHECKSUM_MAX + 1)) || 0;
@@ -68,6 +69,7 @@ function binaryToText(binary: Buffer): string {
 function getWordFromTimestamp(timestamp: number, usePassword: boolean): string {
   const dateOffset: number = Math.max(timestamp - WALLET_BRAIN_DATE_OFFSET, 0);
   let weeksCount = Math.trunc(dateOffset / WALLET_BRAIN_DATE_QUANTUM);
+  console.log(weeksCount)
 
   if (weeksCount >= WALLET_BRAIN_DATE_MAX_WEEKS_COUNT) {
     throw new Error('SEED PHRASE needs to be extended or refactored');
@@ -84,14 +86,14 @@ function getWordFromTimestamp(timestamp: number, usePassword: boolean): string {
   return wordByNum(weeksCount);
 }
 
-export function getTimestampFromWord(word: string, passwordUsed: { value: boolean }): number {
+export function getTimestampFromWord(word: string, passwordUsed: boolean): number {
   let weeks = numByWord(word);
 
   if (weeks >= WALLET_BRAIN_DATE_MAX_WEEKS_COUNT) {
     weeks -= WALLET_BRAIN_DATE_MAX_WEEKS_COUNT;
-    passwordUsed.value = true;
+    passwordUsed = true;
   } else {
-    passwordUsed.value = false;
+    passwordUsed = false;
   }
 
   return weeks * WALLET_BRAIN_DATE_QUANTUM + WALLET_BRAIN_DATE_OFFSET;

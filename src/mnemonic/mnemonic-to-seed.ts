@@ -1,4 +1,3 @@
-import { getTimestampFromWord } from './seed-to-mnemonic';
 import { MnemonicToSeedResult } from './types';
 import { phrases } from '../consts/phrases';
 import { keysFromDefault } from '../lib/crypto';

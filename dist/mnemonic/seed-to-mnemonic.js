@@ -15,10 +15,11 @@ function seedToMnemonic(keysSeedHex) {
     }
     const keysSeedBinary = Buffer.from(keysSeedHex, 'hex');
     const mnemonic = binaryToText(keysSeedBinary);
-    const timestamp = WALLET_BRAIN_DATE_OFFSET;
+    const timestamp = Math.floor(Date.now() / 1000);
     const creationTimestampWord = getWordFromTimestamp(timestamp, false);
+    const timestampFromWord = getTimestampFromWord(creationTimestampWord, false);
     const hashWithTimestamp = Buffer.from((0, crypto_1.fastHash)(keysSeedBinary));
-    hashWithTimestamp.writeBigUInt64LE(BigInt(timestamp), 0);
+    hashWithTimestamp.writeBigUInt64LE(BigInt(timestampFromWord), 0);
     const checksumHash = (0, crypto_1.fastHash)(hashWithTimestamp);
     const checksumValue = Number(checksumHash.readBigUInt64LE(0) % BigInt(CHECKSUM_MAX + 1)) || 0;
     const auditableFlag = 0;
@@ -53,6 +54,7 @@ function binaryToText(binary) {
 function getWordFromTimestamp(timestamp, usePassword) {
     const dateOffset = Math.max(timestamp - WALLET_BRAIN_DATE_OFFSET, 0);
     let weeksCount = Math.trunc(dateOffset / WALLET_BRAIN_DATE_QUANTUM);
+    console.log(weeksCount);
     if (weeksCount >= WALLET_BRAIN_DATE_MAX_WEEKS_COUNT) {
         throw new Error('SEED PHRASE needs to be extended or refactored');
     }
@@ -68,10 +70,10 @@ function getTimestampFromWord(word, passwordUsed) {
     let weeks = numByWord(word);
     if (weeks >= WALLET_BRAIN_DATE_MAX_WEEKS_COUNT) {
         weeks -= WALLET_BRAIN_DATE_MAX_WEEKS_COUNT;
-        passwordUsed.value = true;
+        passwordUsed = true;
     }
     else {
-        passwordUsed.value = false;
+        passwordUsed = false;
     }
     return weeks * WALLET_BRAIN_DATE_QUANTUM + WALLET_BRAIN_DATE_OFFSET;
 }

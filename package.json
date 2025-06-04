@@ -1,8 +1,8 @@
 {
   "name": "zano-mnemonic",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repository": "",
-  "author": "webHikari <https://t.me/net_hikari> BadVoice <https://t.me/GermanSmurov>",
+  "author": "BadVoice <https://t.me/GermanSmurov>",
   "main": "dist/index.js",
   "private": false,
   "license": "MIT",
